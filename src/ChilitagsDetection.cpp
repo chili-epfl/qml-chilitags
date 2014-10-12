@@ -64,7 +64,7 @@ void ChilitagsDetection::setSourceImage(QVariant sourceImage)
         // TODO: manual conversion from float[16] to double[16], remove this when everything in Chilitags is float
         float values[16];
         for (int i = 0; i<16; ++i) values[i] = tag.second.val[i];
-        tags.insert(QString::fromStdString(tag.first), QMatrix4x4(values));
+        tags.insert(QString::fromStdString(tag.first), QMatrix4x4(values)); //TODO: float* cast to qreal* which is double* typedef on desktop, WTF actually happens here to make it work?
     }
     emit tagsChanged(tags);
     //}

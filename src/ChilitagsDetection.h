@@ -84,6 +84,7 @@ public:
     //TODO: setDetectionPeriod
     //TODO: setPerformance
     //TODO: setCornerRefinement
+    //TODO: setMinInputWidth
     //TODO: We should not be exposing setConfig directly, the config is the QML "subtree" that is the children of ChilitagsDetection itself
 
 signals:
