@@ -54,17 +54,20 @@ QMatrix4x4 ChilitagsDetection::getProjectionMatrix() const
 
 void ChilitagsDetection::setSourceImage(QVariant sourceImage)
 {
-    tags.clear();
     cv::Mat sourceMat = sourceImage.value<cv::Mat>();
+
+    //TODO: MOVE THIS TO ITS OWN THREAD!!!!!!!!!!!!!
+    //{
     auto stlTags = chilitags.estimate(sourceMat);
+    tags.clear();
     for (auto tag : stlTags) {
-        // manual conversion from float[16] to double[16]
+        // TODO: manual conversion from float[16] to double[16], remove this when everything in Chilitags is float
         float values[16];
         for (int i = 0; i<16; ++i) values[i] = tag.second.val[i];
         tags.insert(QString::fromStdString(tag.first), QMatrix4x4(values));
-
-        qDebug() << "Tag detected: " << tag.first.c_str();
     }
     emit tagsChanged(tags);
+    //}
+
 }
 

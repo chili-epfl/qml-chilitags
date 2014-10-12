@@ -16,38 +16,36 @@
  */
 
 /**
- * @file ChilitagsPlugin.h
- * @brief Object that exposes the Chilitags plugin components as QML objects
+ * @file MatrixTransform.cpp
+ * @brief Transforms QML items by QMatrix4x4 transform matrix
  * @author Ayberk Özgür
  * @author Quentin Bonnard
  * @version 1.0
  * @date 2014-10-10
  */
 
-#ifndef CHILITAGSPLUGIN_H
-#define CHILITAGSPLUGIN_H
-
-#include <QQmlExtensionPlugin>
-#include <qqml.h>
-
-#include "ChilitagsDetection.h"
-#include "ChilitagsObject.h"
 #include "MatrixTransform.h"
 
-#ifdef QT_3D_LIB
-#include "MatrixTransform3D.h"
-#endif
+MatrixTransform::MatrixTransform(QQuickItem* parent) :
+    QQuickTransform(parent)
+{}
 
-/**
- * @brief Object that exposes the Chilitags plugin and friends as QML objects
- */
-class ChilitagsPlugin : public QQmlExtensionPlugin
+QMatrix4x4 MatrixTransform::getMatrix() const
 {
-Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
+    return matrix;
+}
 
-public:
-    void registerTypes(const char *uri);
-};
+void MatrixTransform::setMatrix(QMatrix4x4 matrix)
+{
+    if (this->matrix == matrix)
+        return;
+    this->matrix = matrix;
+    update();
+    emit transformChanged();
+}
 
-#endif // CHILITAGSPLUGIN_H
+void MatrixTransform::applyTo(QMatrix4x4* matrix) const
+{
+    matrix->operator*=(this->matrix);
+}
+

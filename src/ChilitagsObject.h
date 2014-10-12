@@ -83,17 +83,13 @@ signals:
 
     /**
      * @brief Emitted when this Chilitags object enters or exits the scene
-     *
-     * @param visible Whether this Chilitags object is visible now
      */
-    void visibilityChanged(bool visible);
+    void visibilityChanged();
 
     /**
      * @brief Emitted when the pose of this Chilitags object changes
-     *
-     * @param transform New pose of this Chilitags object
      */
-    void transformChanged(QMatrix4x4 transform);
+    void transformChanged();
 
 public slots:
 

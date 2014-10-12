@@ -49,6 +49,10 @@ flags = [
         '/opt/Qt/5.3/gcc_64/include/QtMultimedia',
         '-I',
         '/opt/Qt/5.3/gcc_64/include/QtGui',
+        '-I',
+        '/opt/Qt/5.3/gcc_64/include/Qt3D',
+        '-I',
+        '/opt/Qt/5.3/gcc_64/include/QtWidgets',
         ]
 
 if compilation_database_folder:

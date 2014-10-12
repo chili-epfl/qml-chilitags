@@ -61,10 +61,10 @@ void ChilitagsObject::updateTag(const QVariantMap& tags)
     bool wasVisible = visible;
     visible = (me != tags.end());
     if(wasVisible != visible)
-        emit visibilityChanged(visible);
+        emit visibilityChanged();
     if(visible) {
         transform = me->value<QMatrix4x4>();
-        emit transformChanged(transform);
+        emit transformChanged();
     }
 }
 

@@ -78,8 +78,13 @@ public:
      */
     void setSourceImage(QVariant sourceImage);
 
-    //TODO: implement other methods of chilitags, e.g. setDefaultTagSize, setConfig...
-    //TODO: we should not be exposing setConfig directly, the config is the QML setup below the ChilitagsDetection itself
+    //TODO: setDefaultTagSize
+    //TODO: setFilter
+    //TODO: setCalibration
+    //TODO: setDetectionPeriod
+    //TODO: setPerformance
+    //TODO: setCornerRefinement
+    //TODO: We should not be exposing setConfig directly, the config is the QML "subtree" that is the children of ChilitagsDetection itself
 
 signals:
 
@@ -90,13 +95,15 @@ signals:
      */
     void tagsChanged(QVariantMap tags);
 
-    //TODO: make use of this
     void projectionMatrixChanged();
 
 private:
 
     QVariantMap tags;                   ///< Set of most recent tags and their poses wrt the camera, maps QString's to QMatrix4x4's
+    
+    //TODO: Recreate this with new size
     chilitags::Chilitags3D chilitags;   ///< The tag detector
+
 };
 
 #endif // CHILITAGSDETECTION_H
