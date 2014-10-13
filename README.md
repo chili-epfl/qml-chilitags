@@ -183,5 +183,5 @@ These instructions assume `armv7-a` target architecture. For other architectures
 Running Samples
 ---------------
 
-Coming soon...
+See [samples/README.md](samples/README.md).
 
