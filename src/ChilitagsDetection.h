@@ -27,10 +27,13 @@
 #ifndef CHILITAGSDETECTION_H
 #define CHILITAGSDETECTION_H
 
-#include <QQuickItem>
-#include <QMatrix4x4>
+#include<QQuickItem>
+#include<QMatrix4x4>
+#include<QMetaType>
 
-#include <chilitags/chilitags.hpp>
+#include<chilitags/chilitags.hpp>
+
+#include"ChilitagsThread.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 
@@ -98,13 +101,18 @@ signals:
 
     void projectionMatrixChanged();
 
+private slots:
+
+    void setTags(Str2TransformMap tags);
+
 private:
 
     QVariantMap tags;                   ///< Set of most recent tags and their poses wrt the camera, maps QString's to QMatrix4x4's
-    
-    //TODO: Recreate this with new size
+
+    //TODO: Recreate this with new size -- is it necessary?
     chilitags::Chilitags3D chilitags;   ///< The tag detector
 
+    ChilitagsThread thread;
 };
 
 #endif // CHILITAGSDETECTION_H

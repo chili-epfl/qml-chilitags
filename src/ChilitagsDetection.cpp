@@ -27,11 +27,19 @@
 #include "ChilitagsDetection.h"
 
 ChilitagsDetection::ChilitagsDetection(QQuickItem *parent) :
-    QQuickItem(parent)
-{}
+    QQuickItem(parent),
+    chilitags(),
+    thread(&chilitags)
+{
+    qRegisterMetaType<Str2TransformMap>("Str2TransformMap");
+    connect(&thread,SIGNAL(tagsReady(Str2TransformMap)),this,SLOT(setTags(Str2TransformMap)));
+    thread.start();
+}
 
 ChilitagsDetection::~ChilitagsDetection()
-{}
+{
+    thread.stop();
+}
 
 QVariantMap ChilitagsDetection::getTags() const
 {
@@ -54,11 +62,11 @@ QMatrix4x4 ChilitagsDetection::getProjectionMatrix() const
 
 void ChilitagsDetection::setSourceImage(QVariant sourceImage)
 {
-    cv::Mat sourceMat = sourceImage.value<cv::Mat>();
+    thread.presentFrame(sourceImage.value<cv::Mat>());
+}
 
-    //TODO: MOVE THIS TO ITS OWN THREAD!!!!!!!!!!!!!
-    //{
-    auto stlTags = chilitags.estimate(sourceMat);
+void ChilitagsDetection::setTags(Str2TransformMap stlTags)
+{
     tags.clear();
     for (auto tag : stlTags) {
         // TODO: manual conversion from float[16] to double[16], remove this when everything in Chilitags is float
@@ -67,7 +75,5 @@ void ChilitagsDetection::setSourceImage(QVariant sourceImage)
         tags.insert(QString::fromStdString(tag.first), QMatrix4x4(values)); //TODO: float* cast to qreal* which is double* typedef on desktop, WTF actually happens here to make it work?
     }
     emit tagsChanged(tags);
-    //}
-
 }
 

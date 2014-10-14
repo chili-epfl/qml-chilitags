@@ -9,7 +9,7 @@ QT += qml quick
 qtHaveModule(3d){
     message("Qt3D found, adding 3d components.")
     QT += 3d
-    DEFINES += QT_3D_LIB    #QMake should be adding this but it doesn't...
+    DEFINES += QT_3D_LIB    #QMake should be adding this but it doesnt...
 
     HEADERS += \
         src/MatrixTransform3D.h
@@ -33,12 +33,14 @@ uri = Chilitags
 HEADERS += \
     src/MatrixTransform.h \
     src/ChilitagsDetection.h \
+    src/ChilitagsThread.h \
     src/ChilitagsObject.h \
     src/ChilitagsPlugin.h
 
 SOURCES += \
     src/MatrixTransform.cpp \
     src/ChilitagsDetection.cpp  \
+    src/ChilitagsThread.cpp \
     src/ChilitagsObject.cpp \
     src/ChilitagsPlugin.cpp
 
