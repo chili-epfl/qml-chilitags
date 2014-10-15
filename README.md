@@ -114,7 +114,7 @@ These instructions assume `armv7-a` target architecture. For other architectures
   mkdir build-desktop
   cd build-desktop
   cmake ../.. \
-      -DCMAKE_TOOLCHAIN_FILE=$OpenCV_DIR/android.toolchain.cmake \
+      -DCMAKE_TOOLCHAIN_FILE=../android/android.toolchain.cmake \
       -DCMAKE_INSTALL_PREFIX=$ANDROID_STANDALONE_TOOLCHAIN/sysroot/usr/share/opencv/
   ```
 
