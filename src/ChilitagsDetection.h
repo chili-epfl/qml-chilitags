@@ -45,6 +45,7 @@ Q_OBJECT
     Q_PROPERTY(QVariant sourceImage WRITE setSourceImage)
     Q_PROPERTY(QVariantMap tags READ getTags NOTIFY tagsChanged) //TODO: would a QMap<QString,QMatrix> do ?
     Q_PROPERTY(QMatrix4x4 projectionMatrix READ getProjectionMatrix NOTIFY projectionMatrixChanged)
+    Q_PROPERTY(QString tagConfigurationFile WRITE setTagConfigurationFile)
 
 public:
 
@@ -89,6 +90,8 @@ public:
     //TODO: setCornerRefinement
     //TODO: setMinInputWidth
     //TODO: We should not be exposing setConfig directly, the config is the QML "subtree" that is the children of ChilitagsDetection itself
+
+    void setTagConfigurationFile(QString& filename);
 
 signals:
 

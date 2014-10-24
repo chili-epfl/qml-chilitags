@@ -77,3 +77,19 @@ void ChilitagsDetection::setTags(Str2TransformMap stlTags)
     emit tagsChanged(tags);
 }
 
+void ChilitagsDetection::setTagConfigurationFile(QString& filename)
+{
+    QFile file(filename);
+    if(!file.open(QFile::ReadOnly | QFile::Text)){
+        qDebug() << "Could not open file for read: " << filename;
+        return;
+    }
+
+    QTextStream in(&file);
+    QString text = in.readAll();
+
+    chilitags.readTagConfiguration(text.toStdString());
+
+    file.close();
+}
+
