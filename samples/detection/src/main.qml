@@ -23,13 +23,10 @@ Window {
         id: chilitags
         sourceImage: camera.cvImage
 
-        property vector3d tagCenter: Qt.vector3d(10,10,0)
-
         //We declare the detection of tag #0
         ChilitagsObject{
             id: tag
             name: "tag_0"
-            property vector3d center: transform.times(parent.tagCenter) //TODO: This is not essential but the window doesn't launch without this
         }
     }
 
