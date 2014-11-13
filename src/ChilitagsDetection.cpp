@@ -77,3 +77,10 @@ void ChilitagsDetection::setTags(Str2TransformMap stlTags)
     emit tagsChanged(tags);
 }
 
+void ChilitagsDetection::setTagConfigurationFile(QString tagConfigurationFile)
+{
+    QFile configFile(tagConfigurationFile);
+    configFile.open(QFile::ReadOnly);
+    QTextStream inStream(&configFile);
+    chilitags.readTagConfiguration(inStream.readAll().toStdString(),false,true);
+}

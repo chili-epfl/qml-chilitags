@@ -45,6 +45,7 @@ Q_OBJECT
     Q_PROPERTY(QVariant sourceImage WRITE setSourceImage)
     Q_PROPERTY(QVariantMap tags READ getTags NOTIFY tagsChanged) //TODO: would a QMap<QString,QMatrix> do ?
     Q_PROPERTY(QMatrix4x4 projectionMatrix READ getProjectionMatrix NOTIFY projectionMatrixChanged)
+    Q_PROPERTY(QString tagConfigurationFile WRITE setTagConfigurationFile)
 
 public:
 
@@ -80,6 +81,13 @@ public:
      * @param sourceImage Must contain a cv::Mat that is e.g the latest camera image
      */
     void setSourceImage(QVariant sourceImage);
+
+    /**
+     * @brief Reads a Chilitags tag configuration from the given qrc file
+     *
+     * @param tagConfigurationFile The qrc file, must begin with :/
+     */
+    void setTagConfigurationFile(QString tagConfigurationFile);
 
     //TODO: setDefaultTagSize
     //TODO: setFilter
