@@ -29,7 +29,7 @@
 // ChilitagsTask implementation
 //*****************************************************************************
 
-ChilitagsTask::ChilitagsTask(chilitags::Chilitags3D* chilitags)
+ChilitagsTask::ChilitagsTask(chilitags::Chilitags3D_<qreal>* chilitags)
 {
     this->chilitags = chilitags;
 }
@@ -122,14 +122,14 @@ void ChilitagsTask::doWork()
 // ChilitagsThread implementation
 //*****************************************************************************
 
-ChilitagsThread::ChilitagsThread(chilitags::Chilitags3D* chilitags)
+ChilitagsThread::ChilitagsThread(chilitags::Chilitags3D_<qreal>* chilitags)
 {
     task = new ChilitagsTask(chilitags);
     task->moveToThread(&workerThread);
     connect(&workerThread, SIGNAL(started()), task, SLOT(doWork()));
     connect(
-            task, SIGNAL(tagsReady(Str2TransformMap)),
-            this, SIGNAL(tagsReady(Str2TransformMap)));
+            task, SIGNAL(tagsReady(chilitags::Chilitags3D_<qreal>::TagPoseMap)),
+            this, SIGNAL(tagsReady(chilitags::Chilitags3D_<qreal>::TagPoseMap)));
 }
 
 ChilitagsThread::~ChilitagsThread()

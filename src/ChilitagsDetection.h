@@ -111,14 +111,14 @@ signals:
 
 private slots:
 
-    void setTags(Str2TransformMap tags);
+    void setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap tags);
 
 private:
 
     QVariantMap tags;                   ///< Set of most recent tags and their poses wrt the camera, maps QString's to QMatrix4x4's
 
     //TODO: Recreate this with new size -- is it necessary?
-    chilitags::Chilitags3D chilitags;   ///< The tag detector
+    chilitags::Chilitags3D_<qreal> chilitags;   ///< The tag detector
 
     ChilitagsThread thread;
 };

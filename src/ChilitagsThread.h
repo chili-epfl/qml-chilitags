@@ -40,8 +40,7 @@
 #include<string>
 #include<map>
 
-typedef std::map<std::string,cv::Matx44d> Str2TransformMap;
-Q_DECLARE_METATYPE(Str2TransformMap)
+Q_DECLARE_METATYPE(chilitags::Chilitags3D_<qreal>::TagPoseMap)
 
 /**
  * @brief Object that contains the Chilitags3D.estimate() loop and its parameters
@@ -56,7 +55,7 @@ public:
      *
      * @param chilitags Tag detector, must be already initialized
      */
-    ChilitagsTask(chilitags::Chilitags3D* chilitags);
+    ChilitagsTask(chilitags::Chilitags3D_<qreal>* chilitags);
 
     /**
      * @brief Destroys this camera access task, does not touch the camera or the videoFrame
@@ -91,7 +90,7 @@ signals:
     /**
      * @brief Emitted when Chilitags3D.estimate() returns some tags
      */
-    void tagsReady(Str2TransformMap tags);
+    void tagsReady(chilitags::Chilitags3D_<qreal>::TagPoseMap tags);
 
 private:
 
@@ -109,7 +108,7 @@ private:
         WAITING_FOR_FRAME   ///< Waiting for a new frame
     };
 
-    chilitags::Chilitags3D* chilitags;  ///< Tag detector
+    chilitags::Chilitags3D_<qreal>* chilitags;  ///< Tag detector
     QMutex frameLock;                   ///< Mutex that locks the frame transaction
     QWaitCondition nextFrameCond;       ///< Condition to wait on until the next frame arrives
     State state = NONE;                 ///< Thread's current state
@@ -134,7 +133,7 @@ public:
      *
      * @param chilitags Tag detector, must be already initialized
      */
-    ChilitagsThread(chilitags::Chilitags3D* chilitags);
+    ChilitagsThread(chilitags::Chilitags3D_<qreal>* chilitags);
 
     /**
      * @brief Destroys this Chilitags thread controller
@@ -169,7 +168,7 @@ signals:
     /**
      * @brief Emitted when Chilitags3D.estimate() returns some tags
      */
-    void tagsReady(Str2TransformMap tags);
+    void tagsReady(chilitags::Chilitags3D_<qreal>::TagPoseMap tags);
 
 private:
 

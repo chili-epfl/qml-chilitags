@@ -31,8 +31,9 @@ ChilitagsDetection::ChilitagsDetection(QQuickItem *parent) :
     chilitags(),
     thread(&chilitags)
 {
-    qRegisterMetaType<Str2TransformMap>("Str2TransformMap");
-    connect(&thread,SIGNAL(tagsReady(Str2TransformMap)),this,SLOT(setTags(Str2TransformMap)));
+    qRegisterMetaType<chilitags::Chilitags3D_<qreal>::TagPoseMap>("TagPoseMap");
+    connect(&thread,SIGNAL(tagsReady(chilitags::Chilitags3D_<qreal>::TagPoseMap)),
+            this,SLOT(setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap)));
     thread.start();
 }
 
@@ -54,7 +55,7 @@ QMatrix4x4 ChilitagsDetection::getProjectionMatrix() const
     projectionMatrix.fill(0);
     for (int i = 0; i<3; ++i)
         for (int j = 0; j<3; ++j)
-            projectionMatrix(i,j) = mat.at<double>(i,j);
+            projectionMatrix(i,j) = mat.at<float>(i,j);
     projectionMatrix(3,2) = 1;
 
     return projectionMatrix;
@@ -65,7 +66,7 @@ void ChilitagsDetection::setSourceImage(QVariant sourceImage)
     thread.presentFrame(sourceImage.value<cv::Mat>());
 }
 
-void ChilitagsDetection::setTags(Str2TransformMap stlTags)
+void ChilitagsDetection::setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap stlTags)
 {
     tags.clear();
     for (auto tag : stlTags) {
