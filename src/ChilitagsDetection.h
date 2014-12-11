@@ -30,6 +30,7 @@
 #include<QQuickItem>
 #include<QMatrix4x4>
 #include<QMetaType>
+#include<QMetaObject>
 
 #include<chilitags/chilitags.hpp>
 
@@ -46,6 +47,7 @@ Q_OBJECT
     Q_PROPERTY(QVariantMap tags READ getTags NOTIFY tagsChanged) //TODO: would a QMap<QString,QMatrix> do ?
     Q_PROPERTY(QMatrix4x4 projectionMatrix READ getProjectionMatrix NOTIFY projectionMatrixChanged)
     Q_PROPERTY(QString tagConfigurationFile WRITE setTagConfigurationFile)
+    Q_PROPERTY(QObject* imu WRITE setIMU)
 
 public:
 
@@ -89,6 +91,13 @@ public:
      */
     void setTagConfigurationFile(QString tagConfigurationFile);
 
+    /**
+     * @brief Sets the IMU object that has displacement getter/resetter callbacks
+     *
+     * @param imu Imu object of type IMU
+     */
+    void setIMU(QObject* imu);
+
     //TODO: setDefaultTagSize
     //TODO: setFilter
     //TODO: setCalibration
@@ -117,7 +126,7 @@ private:
 
     QVariantMap tags;                   ///< Set of most recent tags and their poses wrt the camera, maps QString's to QMatrix4x4's
 
-    //TODO: Recreate this with new size -- is it necessary?
+       //TODO: Recreate this with new size -- is it necessary?
     chilitags::Chilitags3D_<qreal> chilitags;   ///< The tag detector
 
     ChilitagsThread thread;

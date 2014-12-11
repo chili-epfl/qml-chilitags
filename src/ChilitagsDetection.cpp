@@ -85,3 +85,9 @@ void ChilitagsDetection::setTagConfigurationFile(QString tagConfigurationFile)
     QTextStream inStream(&configFile);
     chilitags.readTagConfiguration(inStream.readAll().toStdString(),false,true);
 }
+
+void ChilitagsDetection::setIMU(QObject* imu)
+{
+    thread.setIMU(imu);
+}
+

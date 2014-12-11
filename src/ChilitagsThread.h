@@ -32,6 +32,8 @@
 #include<QElapsedTimer>
 #include<QMutex>
 #include<QWaitCondition>
+#include<QQuaternion>
+#include<QVector3D>
 
 #include<opencv2/core.hpp>
 
@@ -85,6 +87,13 @@ public slots:
      */
     void doWork();
 
+    /**
+     * @brief Sets the IMU object that has displacement getter/resetter callbacks
+     *
+     * @param imu Imu object of type IMU
+     */
+    void setIMU(QObject* imu);
+
 signals:
 
     /**
@@ -107,6 +116,12 @@ private:
         BUSY,               ///< Currently busy with Chilitags3D.estimate()
         WAITING_FOR_FRAME   ///< Waiting for a new frame
     };
+
+    QObject* imu = nullptr;             ///< IMU object that has displacement calculation callbacks
+    QQuaternion camDeltaR;
+    cv::Vec<qreal,4> cvCamDeltaR;
+    QVector3D camDeltaT;
+    cv::Vec<qreal,3> cvCamDeltaT;
 
     chilitags::Chilitags3D_<qreal>* chilitags;  ///< Tag detector
     QMutex frameLock;                   ///< Mutex that locks the frame transaction
@@ -163,6 +178,13 @@ public slots:
      */
     void presentFrame(cv::Mat frame);
 
+    /**
+     * @brief Sets the IMU object that has displacement getter/resetter callbacks
+     *
+     * @param imu Imu object of type IMU
+     */
+    void setIMU(QObject* imu);
+
 signals:
 
     /**
@@ -172,8 +194,10 @@ signals:
 
 private:
 
-    QThread workerThread;               ///< The thread that Chilitags will work in
-    ChilitagsTask* task = NULL;         ///< The loop method and parameter container
+    QThread workerThread;           ///< The thread that Chilitags will work in
+    ChilitagsTask* task = nullptr;  ///< The loop method and parameter container
+    QObject* imu = nullptr;         ///< IMU object that has displacement calculation callbacks
+
 };
 
 #endif /* CHILITAGSTHREAD_H */
