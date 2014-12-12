@@ -48,6 +48,7 @@ Q_OBJECT
     Q_PROPERTY(QMatrix4x4 projectionMatrix READ getProjectionMatrix NOTIFY projectionMatrixChanged)
     Q_PROPERTY(QString tagConfigurationFile WRITE setTagConfigurationFile)
     Q_PROPERTY(QObject* imu WRITE setIMU)
+    Q_PROPERTY(qreal persistence WRITE setPersistence)
 
 public:
 
@@ -97,6 +98,13 @@ public:
      * @param imu Imu object of type IMU
      */
     void setIMU(QObject* imu);
+
+    /**
+     * @brief Sets the persistence of tags against being discarded when not detected for a while
+     *
+     * @param persistence Roughly corresponds to number of undetected frames
+     */
+    void setPersistence(qreal persistence);
 
     //TODO: setDefaultTagSize
     //TODO: setFilter

@@ -91,3 +91,8 @@ void ChilitagsDetection::setIMU(QObject* imu)
     thread.setIMU(imu);
 }
 
+void ChilitagsDetection::setPersistence(qreal persistence)
+{
+    chilitags.setPersistence(persistence);
+}
+
