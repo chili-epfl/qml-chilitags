@@ -12,7 +12,14 @@ The following is required for QMLChilitags to work:
 QML API
 -------
 
-Coming soon...
+The QML API consists of the following:
+
+>  - **sourceImage** : `QVariant` - Should contain the input camera image as a `cv::Mat`
+>  - **tags** : `QVariantMap` - Output detected tag poses as a map from `QString` to `QMatrix4x4`
+>  - **projectionMatrix** : `QMatrix4x4` - Output matrix that transforms from the camera frame to the screen frame
+>  - **tagConfigurationFile** : `QString` - qrc file that contains the tag configuration, must begin with `:/`
+
+To use `qml-chilitags`, present a new frame as a `cv::Mat` wrapped in a `QVariant` through the `sourceImage` property.
 
 Desktop Build
 -------------
