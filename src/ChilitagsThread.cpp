@@ -105,9 +105,6 @@ void ChilitagsTask::doWork()
             //Get angular displacement
             QMetaObject::invokeMethod(imu, "getAngularDisplacement", Qt::BlockingQueuedConnection,
                     Q_RETURN_ARG(QQuaternion, camDeltaR));
-            QQuaternion device2cam(0,1,0,0);
-            camDeltaR = device2cam.conjugate()*camDeltaR*device2cam;
-            camDeltaR.normalize();
             cvCamDeltaR(0) = camDeltaR.scalar();
             cvCamDeltaR(1) = camDeltaR.x();
             cvCamDeltaR(2) = camDeltaR.y();
@@ -115,9 +112,7 @@ void ChilitagsTask::doWork()
 
             //Get linear displacement
             QMetaObject::invokeMethod(imu, "getLinearDisplacement", Qt::BlockingQueuedConnection,
-                    Q_RETURN_ARG(QVector3D, camDeltaT),
-                    Q_ARG(QVector3D, QVector3D(0, 0.04, 0)));
-            camDeltaT = device2cam.conjugate().rotatedVector(camDeltaT);
+                    Q_RETURN_ARG(QVector3D, camDeltaT));
             cvCamDeltaT(0) = camDeltaT.x()*1000.0f; //Convert to millimeters
             cvCamDeltaT(1) = camDeltaT.y()*1000.0f; //Convert to millimeters
             cvCamDeltaT(2) = camDeltaT.z()*1000.0f; //Convert to millimeters
