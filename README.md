@@ -18,6 +18,8 @@ The QML API consists of the following:
 >  - **tags** : `QVariantMap` - Output detected tag poses as a map from `QString` to `QMatrix4x4`
 >  - **projectionMatrix** : `QMatrix4x4` - Output matrix that transforms from the camera frame to the screen frame
 >  - **tagConfigurationFile** : `QString` - qrc file that contains the tag configuration, must begin with `:/`
+>  - **imu** : `QObject*` - Input object of type [`IMU`](https://github.com/chili-epfl/qml-imu) that provides inertial sensor data
+>  - **persistence** : `qreal` - Input that sets how resistent tags are against being discarded when not seen for a while
 
 To use `qml-chilitags`, present a new frame as a `cv::Mat` wrapped in a `QVariant` through the `sourceImage` property.
 
