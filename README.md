@@ -171,7 +171,7 @@ These instructions assume `armv7-a` target architecture. For other architectures
   make install
   ```
 
-**Note:** `make install` will try to install libraries to `/libs/armeabiv7-a/`. This is a remnant from ndk-build and should be avoided. Make sure you **don't** execute `make install` with `sudo`.
+  **Note:** `make install` will try to install libraries to `/libs/armeabiv7-a/`. This is a remnant from ndk-build and should be avoided. Make sure you **don't** execute `make install` with `sudo`.
 
 7. Build and install qml-chilitags:
 
