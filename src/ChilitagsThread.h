@@ -118,10 +118,12 @@ private:
     };
 
     QObject* imu = nullptr;             ///< IMU object that has displacement calculation callbacks
-    QQuaternion camDeltaR;
-    cv::Vec<qreal,4> cvCamDeltaR;
-    QVector3D camDeltaT;
-    cv::Vec<qreal,3> cvCamDeltaT;
+    QQuaternion camDeltaR;              ///< Camera delta rotation from previous call time
+    cv::Vec<qreal,4> cvCamDeltaR;       ///< Camera delta rotation from previous call time
+    QVector3D camDeltaT;                ///< Camera delta translation from previous call time
+    cv::Vec<qreal,3> cvCamDeltaT;       ///< Camera delta translation from previous call time
+    QVector3D camFloorVector;           ///< Unit floor vector in camera frame
+    cv::Vec<qreal,3> cvCamFloorVector;  ///< Unit floor vector in camera frame
 
     chilitags::Chilitags3D_<qreal>* chilitags;  ///< Tag detector
     QMutex frameLock;                   ///< Mutex that locks the frame transaction

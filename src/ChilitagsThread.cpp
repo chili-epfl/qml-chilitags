@@ -55,13 +55,13 @@ void ChilitagsTask::presentFrame(cv::Mat frame){
         case NONE:
             break;
 
-        //Currently processing, copy buffer over the next frame
+            //Currently processing, copy buffer over the next frame
         case BUSY:
             nextFrame = frame.clone(); //TODO: We're screwed if this thing does not memcpy the buffer behind the curtains
             nextFrameAvailable = true;
             break;
 
-        //Currently waiting, do not copy buffer but present directly
+            //Currently waiting, do not copy buffer but present directly
         case WAITING_FOR_FRAME:
             nextFrame = frame;
             nextFrameAvailable = true;
@@ -101,26 +101,39 @@ void ChilitagsTask::doWork()
 
             //Unlock the lock so that we can present a new frame while getting IMU data and estimating
             frameLock.unlock();
+            chilitags::Chilitags3D_<qreal>::TagPoseMap tags;
+            if(imu != nullptr){
 
-            //Get angular displacement
-            QMetaObject::invokeMethod(imu, "getAngularDisplacement", Qt::BlockingQueuedConnection,
-                    Q_RETURN_ARG(QQuaternion, camDeltaR));
-            cvCamDeltaR(0) = camDeltaR.scalar();
-            cvCamDeltaR(1) = camDeltaR.x();
-            cvCamDeltaR(2) = camDeltaR.y();
-            cvCamDeltaR(3) = camDeltaR.z();
+                //Get angular displacement
+                QMetaObject::invokeMethod(imu, "getAngularDisplacement", Qt::BlockingQueuedConnection,
+                        Q_RETURN_ARG(QQuaternion, camDeltaR));
+                cvCamDeltaR(0) = camDeltaR.scalar();
+                cvCamDeltaR(1) = camDeltaR.x();
+                cvCamDeltaR(2) = camDeltaR.y();
+                cvCamDeltaR(3) = camDeltaR.z();
 
-            //Get linear displacement
-            QMetaObject::invokeMethod(imu, "getLinearDisplacement", Qt::BlockingQueuedConnection,
-                    Q_RETURN_ARG(QVector3D, camDeltaT));
-            cvCamDeltaT(0) = camDeltaT.x()*1000.0f; //Convert to millimeters
-            cvCamDeltaT(1) = camDeltaT.y()*1000.0f; //Convert to millimeters
-            cvCamDeltaT(2) = camDeltaT.z()*1000.0f; //Convert to millimeters
+                //Get linear displacement
+                QMetaObject::invokeMethod(imu, "getLinearDisplacement", Qt::BlockingQueuedConnection,
+                        Q_RETURN_ARG(QVector3D, camDeltaT));
+                cvCamDeltaT(0) = camDeltaT.x()*1000.0f; //Convert to millimeters
+                cvCamDeltaT(1) = camDeltaT.y()*1000.0f; //Convert to millimeters
+                cvCamDeltaT(2) = camDeltaT.z()*1000.0f; //Convert to millimeters
 
-            //Reset displacement calculations for next iteration
-            QMetaObject::invokeMethod(imu, "resetDisplacement", Qt::BlockingQueuedConnection);
+                //Reset displacement calculations for next iteration
+                QMetaObject::invokeMethod(imu, "resetDisplacement", Qt::BlockingQueuedConnection);
 
-            auto tags = chilitags->estimate(nextFrame, chilitags::Chilitags::ASYNC_DETECT_PERIODICALLY, cvCamDeltaR, cvCamDeltaT);
+                //Get floor vector
+                QMetaObject::invokeMethod(imu, "getTargetFloorVector", Qt::BlockingQueuedConnection,
+                        Q_RETURN_ARG(QVector3D, camFloorVector));
+                cvCamFloorVector(0) = camFloorVector.x();
+                cvCamFloorVector(1) = camFloorVector.y();
+                cvCamFloorVector(2) = camFloorVector.z();
+
+                chilitags->setFloorVector(cvCamFloorVector);
+                tags = chilitags->estimate(nextFrame, chilitags::Chilitags::DETECT_ONLY, cvCamDeltaR, cvCamDeltaT);
+            }
+            else
+                tags = chilitags->estimate(nextFrame, chilitags::Chilitags::DETECT_ONLY);
             frameLock.lock();
 
             emit tagsReady(tags);
