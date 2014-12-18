@@ -47,7 +47,13 @@ ChilitagsTask::~ChilitagsTask()
 {
 }
 
-void ChilitagsTask::presentFrame(cv::Mat frame){
+void ChilitagsTask::setDetectionTrigger(chilitags::Chilitags::DetectionTrigger trigger)
+{
+    this->trigger = trigger;
+}
+
+void ChilitagsTask::presentFrame(cv::Mat frame)
+{
     frameLock.lock();
     switch(state){
 
@@ -130,10 +136,11 @@ void ChilitagsTask::doWork()
                 cvCamFloorVector(2) = camFloorVector.z();
 
                 chilitags->setFloorVector(cvCamFloorVector);
-                tags = chilitags->estimate(nextFrame, chilitags::Chilitags::DETECT_ONLY, cvCamDeltaR, cvCamDeltaT);
+                qDebug() << trigger;
+                tags = chilitags->estimate(nextFrame, trigger, cvCamDeltaR, cvCamDeltaT);
             }
             else
-                tags = chilitags->estimate(nextFrame, chilitags::Chilitags::DETECT_ONLY);
+                tags = chilitags->estimate(nextFrame, trigger);
             frameLock.lock();
 
             emit tagsReady(tags);
@@ -171,6 +178,7 @@ void ChilitagsTask::setIMU(QObject* imu)
 ChilitagsThread::ChilitagsThread(chilitags::Chilitags3D_<qreal>* chilitags)
 {
     task = new ChilitagsTask(chilitags);
+    task->setDetectionTrigger(trigger);
     task->setIMU(imu);
     task->moveToThread(&workerThread);
     connect(&workerThread, SIGNAL(started()), task, SLOT(doWork()));
@@ -183,6 +191,13 @@ ChilitagsThread::~ChilitagsThread()
 {
     stop();
     delete task;
+}
+
+void ChilitagsThread::setDetectionTrigger(chilitags::Chilitags::DetectionTrigger detectionTrigger)
+{
+    this->trigger = detectionTrigger;
+    if(task != nullptr)
+        task->setDetectionTrigger(trigger);
 }
 
 void ChilitagsThread::start()
@@ -200,7 +215,8 @@ void ChilitagsThread::stop()
 
 void ChilitagsThread::presentFrame(cv::Mat frame)
 {
-    task->presentFrame(frame);
+    if(task != nullptr)
+        task->presentFrame(frame);
 }
 
 void ChilitagsThread::setIMU(QObject* imu)

@@ -88,6 +88,13 @@ public slots:
     void doWork();
 
     /**
+     * @brief Sets the detection trigger
+     *
+     * @param detectionTrigger The new detection trigger
+     */
+    void setDetectionTrigger(chilitags::Chilitags::DetectionTrigger detectionTrigger);
+
+    /**
      * @brief Sets the IMU object that has displacement getter/resetter callbacks
      *
      * @param imu Imu object of type IMU
@@ -116,6 +123,8 @@ private:
         BUSY,               ///< Currently busy with Chilitags3D.estimate()
         WAITING_FOR_FRAME   ///< Waiting for a new frame
     };
+
+    chilitags::Chilitags::DetectionTrigger trigger = chilitags::Chilitags::DETECT_ONLY;   ///< Detection trigger
 
     QObject* imu = nullptr;             ///< IMU object that has displacement calculation callbacks
     QQuaternion camDeltaR;              ///< Camera delta rotation from previous call time
@@ -170,6 +179,13 @@ public:
 public slots:
 
     /**
+     * @brief Sets the detection trigger
+     *
+     * @param detectionTrigger The new detection trigger
+     */
+    void setDetectionTrigger(chilitags::Chilitags::DetectionTrigger detectionTrigger);
+
+    /**
      * @brief Presents a new frame to be processed by Chilitags
      *
      * If the thread is waiting for a frame, presents the frame directly.
@@ -198,6 +214,7 @@ private:
 
     QThread workerThread;           ///< The thread that Chilitags will work in
     ChilitagsTask* task = nullptr;  ///< The loop method and parameter container
+    chilitags::Chilitags::DetectionTrigger trigger = chilitags::Chilitags::DETECT_ONLY;   ///< Detection trigger
     QObject* imu = nullptr;         ///< IMU object that has displacement calculation callbacks
 
 };

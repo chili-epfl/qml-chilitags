@@ -43,6 +43,8 @@ Q_DECLARE_METATYPE(cv::Mat)
  */
 class ChilitagsDetection : public QQuickItem {
 Q_OBJECT
+    Q_ENUMS(DetectionTrigger)
+    Q_PROPERTY(DetectionTrigger detectionTrigger WRITE setDetectionTrigger)
     Q_PROPERTY(QVariant sourceImage WRITE setSourceImage)
     Q_PROPERTY(QVariantMap tags READ getTags NOTIFY tagsChanged) //TODO: would a QMap<QString,QMatrix> do ?
     Q_PROPERTY(QMatrix4x4 projectionMatrix READ getProjectionMatrix NOTIFY projectionMatrixChanged)
@@ -51,6 +53,18 @@ Q_OBJECT
     Q_PROPERTY(qreal persistence WRITE setPersistence)
 
 public:
+
+    /**
+     * @brief See chilitags for detailed explanation of detection trigger
+     */
+    enum DetectionTrigger {
+        TRACK_AND_DETECT = 0,
+        DETECT_ONLY,
+        TRACK_ONLY,
+        DETECT_PERIODICALLY,
+        ASYNC_DETECT_PERIODICALLY,
+        ASYNC_DETECT_ALWAYS
+    };
 
     /**
      * @brief Creates a new Chilitags detector
@@ -63,6 +77,8 @@ public:
      * @brief Destroys this Chilitags detector
      */
     virtual ~ChilitagsDetection();
+
+public slots:
 
     /**
      * @brief Gets the detected tags
@@ -77,6 +93,13 @@ public:
      * @return Transform matrix that project the pose onto the camera image
      */
     QMatrix4x4 getProjectionMatrix() const;
+
+    /**
+     * @brief Sets the detection trigger
+     *
+     * @param trigger The new detection trigger
+     */
+    void setDetectionTrigger(DetectionTrigger trigger);
 
     /**
      * @brief Pushes a new image to be processed

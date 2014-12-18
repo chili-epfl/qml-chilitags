@@ -61,6 +61,11 @@ QMatrix4x4 ChilitagsDetection::getProjectionMatrix() const
     return projectionMatrix;
 }
 
+void ChilitagsDetection::setDetectionTrigger(DetectionTrigger trigger)
+{
+    thread.setDetectionTrigger((chilitags::Chilitags::DetectionTrigger)trigger);
+}
+
 void ChilitagsDetection::setSourceImage(QVariant sourceImage)
 {
     thread.presentFrame(sourceImage.value<cv::Mat>());
