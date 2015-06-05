@@ -19,11 +19,13 @@
  * @file ChilitagsThread.cpp
  * @brief Runs Chilitags3D.estimate() in a separate thread
  * @author Ayberk Özgür
+ * @author Lorenzo Lucignano (QVideoFilterRunnable implementation)
  * @version 1.0
  * @date 2014-10-14
  */
 
 #include "ChilitagsThread.h"
+
 
 //*****************************************************************************
 // ChilitagsTask implementation
@@ -152,6 +154,72 @@ void ChilitagsThread::stop()
     workerThread.wait();
 }
 
-void ChilitagsThread::presentFrame(cv::Mat frame){
-    task->presentFrame(frame);
+
+QVideoFrame ChilitagsThread::run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags){
+    auto pixelFormat=surfaceFormat.pixelFormat();
+    auto handle=input->handleType();
+    //This case
+    switch (handle) {
+    case QAbstractVideoBuffer::NoHandle: ///< Mainly desktop configuration
+        if(input->map(QAbstractVideoBuffer::ReadOnly)){
+            cv::Mat mat;
+            if( QVideoFrame::imageFormatFromPixelFormat(pixelFormat)!=QImage::Format_Invalid ){
+                QImage img( input->bits(),
+                            input->width(),
+                            input->height(),
+                            input->bytesPerLine(),
+                            QVideoFrame::imageFormatFromPixelFormat(pixelFormat));
+                img=img.convertToFormat(QImage::Format_Grayscale8);
+                mat=cv::Mat(img.height(), img.width(), CV_8UC1,
+                            const_cast<uchar*>(img.constBits()), img.bytesPerLine()).clone();
+                task->presentFrame(mat);
+            }
+            else if (pixelFormat == QVideoFrame::PixelFormat::Format_YUV420P ||
+                     pixelFormat == QVideoFrame::PixelFormat::Format_NV21 ||
+                     pixelFormat == QVideoFrame::PixelFormat::Format_NV12
+                     ) {
+                mat=cv::Mat(input->height(), input->width(),CV_8UC1 ,
+                            const_cast<uchar*>(input->bits())).clone();
+                task->presentFrame(mat);
+            }
+            else{
+                qWarning()<<" Handle: NoHandle, unsupported pixel format:"<<pixelFormat;
+            }
+            input->unmap();
+        }
+        else{
+            qWarning()<<"Cannot map video buffer";
+        }
+        break;
+    case QAbstractVideoBuffer::GLTextureHandle:
+        if ( pixelFormat == QVideoFrame::Format_BGR32){
+            QImage img(input->width(),input->height(),QImage::Format_RGBA8888);
+            GLuint textureId = input->handle().value<GLuint>();
+            QOpenGLContext *ctx = QOpenGLContext::currentContext();
+            QOpenGLFunctions *f = ctx->functions();
+            //GLuint fbo;
+            if(fbo==0)
+                f->glGenFramebuffers(1, &fbo);
+            GLuint prevFbo;
+            f->glGetIntegerv(GL_FRAMEBUFFER_BINDING, (GLint *) &prevFbo);
+            f->glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            f->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureId, 0);
+            f->glPixelStorei(GL_PACK_ALIGNMENT,4);
+            f->glReadPixels(0, 0, input->width(), input->height(), GL_RGBA, GL_UNSIGNED_BYTE, img.bits());
+            f->glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
+            cv::Mat mat=cv::Mat(img.height(), img.width(), CV_8UC4,
+                                const_cast<uchar*>(img.constBits()), img.bytesPerLine()).clone();
+            task->presentFrame(mat);
+        }
+        else{
+            qWarning()<<"Handle: GLTextureHandle, unsupported pixel format:"<<pixelFormat;
+        }
+        break;
+    default:
+        qWarning()<<"Unsupported Video Frame Handle:"<<handle;
+        break;
+    }
+
+    return *input;
 }
+

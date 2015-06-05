@@ -20,27 +20,43 @@
  * @brief Implementation of the QML wrapper for a Chilitags object
  * @author Ayberk Özgür
  * @author Quentin Bonnard
+ * @author Lorenzo Lucignano (QAbstractVideoFilter implementation)
  * @version 1.0
  * @date 2014-10-10
  */
 
 #include "ChilitagsDetection.h"
 
+#include <QOpenGLFramebufferObjectFormat>
+#include <QSurfaceFormat>
+#include <QOpenGLContext>
+#include <QOffscreenSurface>
+#include <QOpenGLPaintDevice>
+#include <QPainter>
+#include <QWindow>
+#include <QOpenGLFramebufferObject>
+
 ChilitagsDetection::ChilitagsDetection(QQuickItem *parent) :
-    QQuickItem(parent),
-    chilitags(),
-    thread(&chilitags)
+    chilitags()
 {
     qRegisterMetaType<chilitags::Chilitags3D_<qreal>::TagPoseMap>("TagPoseMap");
-    connect(&thread,SIGNAL(tagsReady(chilitags::Chilitags3D_<qreal>::TagPoseMap)),
-            this,SLOT(setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap)));
-    thread.start();
+
 }
 
 ChilitagsDetection::~ChilitagsDetection()
 {
-    thread.stop();
+
 }
+
+QVideoFilterRunnable* ChilitagsDetection::createFilterRunnable(){
+    ChilitagsThread* thread=new ChilitagsThread(&chilitags);
+    thread->start();
+    connect(thread,SIGNAL(tagsReady(chilitags::Chilitags3D_<qreal>::TagPoseMap)),
+            this,SLOT(setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap)));
+    return thread;
+
+}
+
 
 QVariantMap ChilitagsDetection::getTags() const
 {
@@ -61,11 +77,6 @@ QMatrix4x4 ChilitagsDetection::getProjectionMatrix() const
     return projectionMatrix;
 }
 
-void ChilitagsDetection::setSourceImage(QVariant sourceImage)
-{
-    thread.presentFrame(sourceImage.value<cv::Mat>());
-}
-
 void ChilitagsDetection::setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap stlTags)
 {
     tags.clear();
@@ -75,6 +86,7 @@ void ChilitagsDetection::setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap stlT
         for (int i = 0; i<16; ++i) values[i] = tag.second.val[i];
         tags.insert(QString::fromStdString(tag.first), QMatrix4x4(values)); //TODO: float* cast to qreal* which is double* typedef on desktop, WTF actually happens here to make it work?
     }
+    qDebug()<<"Found ntags:"<<tags.size();
     emit tagsChanged(tags);
 }
 

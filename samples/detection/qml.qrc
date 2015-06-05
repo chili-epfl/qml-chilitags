@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>src/main.qml</file>
+        <file>src/AnimatedEntity.qml</file>
     </qresource>
 </RCC>

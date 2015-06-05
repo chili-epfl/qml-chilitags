@@ -19,6 +19,7 @@
  * @file ChilitagsThread.h
  * @brief Runs Chilitags3D.estimate() in a separate thread
  * @author Ayberk Özgür
+ * @author Lorenzo Lucignano (QVideoFilterRunnable implementation)
  * @version 1.0
  * @date 2014-10-14
  */
@@ -32,13 +33,17 @@
 #include<QElapsedTimer>
 #include<QMutex>
 #include<QWaitCondition>
-
+#include<QVideoFilterRunnable>
 #include<opencv2/core.hpp>
 
 #include<chilitags/chilitags.hpp>
 
 #include<string>
 #include<map>
+
+
+#include <QOpenGLFunctions>
+
 
 Q_DECLARE_METATYPE(chilitags::Chilitags3D_<qreal>::TagPoseMap)
 
@@ -123,7 +128,7 @@ private:
 /**
  * @brief Object that starts and stops the loop that calls Chilitags3D.estimate()
  */
-class ChilitagsThread : public QObject{
+class ChilitagsThread : public QObject, public QVideoFilterRunnable{
 Q_OBJECT
 
 public:
@@ -150,18 +155,18 @@ public:
      */
     void stop();
 
-public slots:
-
     /**
-     * @brief Presents a new frame to be processed by Chilitags
+     * @brief Converts the input QVideoFrame in cv::Mat and present it to the thread
      *
-     * If the thread is waiting for a frame, presents the frame directly.
-     * If the thread is busy, copies the frame as the next frame to be processed.
-     * Either way, does not busy wait and returns immediately.
+     * @return the original QVideoFrame
      *
-     * @param frame The new frame
+     * The function implements the run method of the QVideoFilterRunnable interface.
+     * https://doc-snapshots.qt.io/qt5-dev/qvideofilterrunnable.html
+     *
      */
-    void presentFrame(cv::Mat frame);
+
+    QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags);
+
 
 signals:
 
@@ -174,6 +179,8 @@ private:
 
     QThread workerThread;               ///< The thread that Chilitags will work in
     ChilitagsTask* task = NULL;         ///< The loop method and parameter container
+    GLuint fbo=0;                         ///< FBO used in android to move a texture to the memory
+
 };
 
 #endif /* CHILITAGSTHREAD_H */

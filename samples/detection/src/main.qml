@@ -1,58 +1,52 @@
-import QtQuick 2.2
-import QtQuick.Window 2.1
-import QtMultimedia 5.0
-import CVCamera 1.0
+
+import QtMultimedia 5.5
 import Chilitags 1.0
 
-Window {
-    visible: true
-    width: camera.size.width
-    height: camera.size.height
-    maximumWidth: camera.size.width
-    maximumHeight: camera.size.height
+import QtQuick 2.3
+import QtQuick.Scene3D 2.0
 
-    //Set up physical camera
-    CVCamera{
-        id: camera
-        device: 0
-        size: "640x480"
+Item {
+    Text {
+        text: "Click me!"
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    //Set up detection
-    Chilitags{
-        id: chilitags
-        sourceImage: camera.cvImage
-
-        property vector3d tagCenter: Qt.vector3d(10,10,0)
-
-        //We declare the detection of tag #0
-        ChilitagsObject{
-            id: tag
-            name: "tag_0"
-            property vector3d center: transform.times(parent.tagCenter) //TODO: This is not essential but the window doesn't launch without this
-        }
+    Camera{
+     id:camDevice
+     //CameraCapture.resolution: "640x480"
+     viewfinder.resolution:"640x480"
     }
-
-    //Set up visual output
     VideoOutput{
-        source: camera
-
-        //This item describes the camera frame, hence its transform is the camera matrix, i.e the projection matrix
-        //Its children will have transform relative to this frame, so we can give them transforms coming directly from Chilitags
-        //We could have put this outside the VideoOutput but this is semantically more elegant
-        Item{
-            id: cameraFrame
-            transform: MatrixTransform{ matrix: chilitags.projectionMatrix }
-
-            //We draw a blue rectangle on top of the tag, its default size is 20 mm
-            Rectangle{
-                color: "blue"
-                width: 20
-                height: 20
-                transform: MatrixTransform{ matrix: tag.transform }
-                visible: tag.visible
-            }
+        source:camDevice
+        filters:[chilitags]
+    }
+    Chilitags{
+        id:chilitags
+    ChilitagsObject{
+        id: tag
+        name: "tag_1023"
         }
     }
+
+    Item {
+        id: scene
+        width: Math.min(parent.width, parent.height) - 100
+        height: width
+        anchors.centerIn: parent
+        //color: "darkRed"
+
+        Scene3D {
+            anchors.fill: parent
+            anchors.margins: 10
+            focus: true
+            aspects: "input"
+
+            AnimatedEntity {}
+        }
+    }
+
+
 }
 

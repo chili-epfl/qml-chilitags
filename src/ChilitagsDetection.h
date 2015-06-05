@@ -20,6 +20,7 @@
  * @brief QML wrapper for a Chilitags object
  * @author Ayberk Özgür
  * @author Quentin Bonnard
+ * @author Lorenzo Lucignano (QAbstractVideoFilter implementation)
  * @version 1.0
  * @date 2014-10-10
  */
@@ -30,6 +31,7 @@
 #include<QQuickItem>
 #include<QMatrix4x4>
 #include<QMetaType>
+#include <QVideoFilterRunnable>
 
 #include<chilitags/chilitags.hpp>
 
@@ -40,9 +42,8 @@ Q_DECLARE_METATYPE(cv::Mat)
 /**
  * @brief QML wrapper for a Chilitags object
  */
-class ChilitagsDetection : public QQuickItem {
+class ChilitagsDetection : public QAbstractVideoFilter{
 Q_OBJECT
-    Q_PROPERTY(QVariant sourceImage WRITE setSourceImage)
     Q_PROPERTY(QVariantMap tags READ getTags NOTIFY tagsChanged) //TODO: would a QMap<QString,QMatrix> do ?
     Q_PROPERTY(QMatrix4x4 projectionMatrix READ getProjectionMatrix NOTIFY projectionMatrixChanged)
     Q_PROPERTY(QString tagConfigurationFile WRITE setTagConfigurationFile)
@@ -76,13 +77,6 @@ public:
     QMatrix4x4 getProjectionMatrix() const;
 
     /**
-     * @brief Pushes a new image to be processed
-     *
-     * @param sourceImage Must contain a cv::Mat that is e.g the latest camera image
-     */
-    void setSourceImage(QVariant sourceImage);
-
-    /**
      * @brief Reads a Chilitags tag configuration from the given qrc file
      *
      * @param tagConfigurationFile The qrc file, must begin with :/
@@ -97,6 +91,14 @@ public:
     //TODO: setCornerRefinement
     //TODO: setMinInputWidth
     //TODO: We should not be exposing setConfig directly, the config is the QML "subtree" that is the children of ChilitagsDetection itself
+
+    /**
+     * @brief Factory function to create a new instance of a QVideoFilterRunnable.
+     *        https://doc-snapshots.qt.io/qt5-dev/qabstractvideofilter.html
+     *
+     * @param
+     */
+    QVideoFilterRunnable* createFilterRunnable();
 
 signals:
 
@@ -120,7 +122,6 @@ private:
     //TODO: Recreate this with new size -- is it necessary?
     chilitags::Chilitags3D_<qreal> chilitags;   ///< The tag detector
 
-    ChilitagsThread thread;
 };
 
 #endif // CHILITAGSDETECTION_H

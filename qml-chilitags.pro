@@ -1,10 +1,10 @@
 TEMPLATE = lib
 TARGET = chilitagsplugin
 
-CONFIG += qt plugin c++11 nostrip
+CONFIG += qt plugin c++11 nostrip debug
 CONFIG -= android_install
 
-QT += qml quick
+QT += qml quick multimedia
 
 qtHaveModule(3d){
     message("Qt3D found, adding 3d components.")
@@ -57,7 +57,6 @@ android {
     INCLUDEPATH += /home/chili/chilitags/build-linux/install/include
     LIBS += -L/home/chili/opencv/build-linux/install/lib
     LIBS += -L/home/chili/chilitags/build-linux/install/lib
-
 }
 
 OTHER_FILES += qmldir #chilitags.types
@@ -66,10 +65,10 @@ OTHER_FILES += qmldir #chilitags.types
 qmldir.files = qmldir
 #types.files = chilitags.types
 
-    installPath = $$[QT_INSTALL_QML]/$$replace(uri, \\., /)
-    qmldir.path = $$installPath
-    #types.path = $$installPath
-    target.path = $$installPath
+installPath = $$[QT_INSTALL_QML]/$$replace(uri, \\., /)
+qmldir.path = $$installPath
+#types.path = $$installPath
+target.path = $$installPath
 
 INSTALLS += target qmldir #types
 

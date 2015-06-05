@@ -1,13 +1,16 @@
 #include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include <QQuickView>
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
+    QQuickView view;
 
-    engine.load(QUrl(QStringLiteral("qrc:///src/main.qml")));
+    view.resize(500, 500);
+    view.setResizeMode(QQuickView::SizeRootObjectToView);
+    view.setSource(QUrl("qrc:///src/main.qml"));
+    view.show();
 
     return app.exec();
 }
