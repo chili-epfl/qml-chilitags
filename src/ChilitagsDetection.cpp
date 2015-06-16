@@ -27,14 +27,7 @@
 
 #include "ChilitagsDetection.h"
 
-#include <QOpenGLFramebufferObjectFormat>
-#include <QSurfaceFormat>
-#include <QOpenGLContext>
-#include <QOffscreenSurface>
-#include <QOpenGLPaintDevice>
-#include <QPainter>
-#include <QWindow>
-#include <QOpenGLFramebufferObject>
+
 
 ChilitagsDetection::ChilitagsDetection(QQuickItem *parent) :
     chilitags()
@@ -86,6 +79,10 @@ void ChilitagsDetection::setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap stlT
         for (int i = 0; i<16; ++i) values[i] = tag.second.val[i];
         tags.insert(QString::fromStdString(tag.first), QMatrix4x4(values)); //TODO: float* cast to qreal* which is double* typedef on desktop, WTF actually happens here to make it work?
     }
+    for(ChilitagsObject* obj : m_chiliobjects){
+        obj->updateTag(tags);
+    }
+
     qDebug()<<"Found ntags:"<<tags.size();
     emit tagsChanged(tags);
 }
@@ -97,3 +94,13 @@ void ChilitagsDetection::setTagConfigurationFile(QString tagConfigurationFile)
     QTextStream inStream(&configFile);
     chilitags.readTagConfiguration(inStream.readAll().toStdString(),false,true);
 }
+
+
+QQmlListProperty<ChilitagsObject> ChilitagsDetection::chiliobjects()
+{
+    return QQmlListProperty<ChilitagsObject>(this, m_chiliobjects);
+}
+
+
+
+

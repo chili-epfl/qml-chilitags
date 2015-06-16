@@ -30,7 +30,6 @@
 #include <QQuickItem>
 #include <QMatrix4x4>
 
-#include "ChilitagsDetection.h"
 
 /**
  * @brief Describes a Chilitags object that corresponds to a real world object that possibly carries an AR tag
@@ -100,12 +99,7 @@ public slots:
      */
     void updateTag(const QVariantMap& tags);
 
-    /**
-     * @brief Sets a new parent to this Chilitags object
-     *
-     * @param parent The new parent, must be ChilitagsDetection
-     */
-    void changeParent(QQuickItem* parent);
+
 
 private:
 

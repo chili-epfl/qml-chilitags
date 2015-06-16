@@ -32,10 +32,18 @@
 #include<QMatrix4x4>
 #include<QMetaType>
 #include <QVideoFilterRunnable>
+#include <QOpenGLFramebufferObjectFormat>
+#include <QSurfaceFormat>
+#include <QOpenGLContext>
+#include <QOffscreenSurface>
+#include <QOpenGLPaintDevice>
+#include <QPainter>
+#include <QWindow>
+#include <QOpenGLFramebufferObject>
 
-#include<chilitags/chilitags.hpp>
-
-#include"ChilitagsThread.h"
+#include <chilitags/chilitags.hpp>
+#include "ChilitagsObject.h"
+#include "ChilitagsThread.h"
 
 Q_DECLARE_METATYPE(cv::Mat)
 
@@ -47,7 +55,7 @@ Q_OBJECT
     Q_PROPERTY(QVariantMap tags READ getTags NOTIFY tagsChanged) //TODO: would a QMap<QString,QMatrix> do ?
     Q_PROPERTY(QMatrix4x4 projectionMatrix READ getProjectionMatrix NOTIFY projectionMatrixChanged)
     Q_PROPERTY(QString tagConfigurationFile WRITE setTagConfigurationFile)
-
+    Q_PROPERTY(QQmlListProperty<ChilitagsObject> chiliobjects READ chiliobjects)
 public:
 
     /**
@@ -99,6 +107,8 @@ public:
      * @param
      */
     QVideoFilterRunnable* createFilterRunnable();
+    QQmlListProperty<ChilitagsObject> chiliobjects();
+
 
 signals:
 
@@ -119,6 +129,7 @@ private:
 
     QVariantMap tags;                   ///< Set of most recent tags and their poses wrt the camera, maps QString's to QMatrix4x4's
 
+    QList<ChilitagsObject*> m_chiliobjects;
     //TODO: Recreate this with new size -- is it necessary?
     chilitags::Chilitags3D_<qreal> chilitags;   ///< The tag detector
 

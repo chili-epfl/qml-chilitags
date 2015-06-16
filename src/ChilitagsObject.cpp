@@ -29,12 +29,7 @@
 ChilitagsObject::ChilitagsObject(QQuickItem* parent) :
     QQuickItem(parent)
 {
-    //FIXME: the parentChanged signal is the only reason
-    // that we need ChilitagsObject to be a QQuickItem
-    // ... maybe there is a better way
-    //connect(this, &ChilitagsDetection::parentChanged, this, &ChilitagsObject::changeParent);
-    if(parent)
-        connect((ChilitagsDetection*) parent, &ChilitagsDetection::tagsChanged, this, &ChilitagsObject::updateTag);
+
 }
 
 QString ChilitagsObject::getName() const
@@ -70,10 +65,5 @@ void ChilitagsObject::updateTag(const QVariantMap& tags)
     }
 }
 
-void ChilitagsObject::changeParent(QQuickItem *parent)
-{
-    //FIXME: we probably need to disconnect the previous parent, don't we ?
-    if(parent)
-        connect((ChilitagsDetection*) parent, &ChilitagsDetection::tagsChanged, this, &ChilitagsObject::updateTag);
-}
+
 
