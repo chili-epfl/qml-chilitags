@@ -6,25 +6,23 @@ QMLChilitags is a QML wrapper for the fiducial marker tracker Chilitags. It work
 The following is required for QMLChilitags to work:
 
   - Ubuntu `14.04`
-  - Qt `5.3.2`
-  - OpenCV `3.0.0-alpha` (**Note:** If you checked out OpenCV master branch, change `cv::ITERATIVE` to `cv::SOLVEPNP_ITERATIVE` in `Chilitags3D.cpp` when building Chilitags. At the time of writing, this API change in OpenCV is not yet in a tag, so it is not included in the Chilitags source.)
+  - Qt `5.5`
+  - OpenCV `3.0.0-beta` (**Note:** If you checked out OpenCV master branch, change `cv::ITERATIVE` to `cv::SOLVEPNP_ITERATIVE` in `Chilitags3D.cpp` when building Chilitags. At the time of writing, this API change in OpenCV is not yet in a tag, so it is not included in the Chilitags source.)
 
 QML API
 -------
 
 The QML API consists of the following:
 
->  - **sourceImage** : `QVariant` - Should contain the input camera image as a `cv::Mat`
->  - **tags** : `QVariantMap` - Output detected tag poses as a map from `QString` to `QMatrix4x4`
->  - **projectionMatrix** : `QMatrix4x4` - Output matrix that transforms from the camera frame to the screen frame
->  - **tagConfigurationFile** : `QString` - qrc file that contains the tag configuration, must begin with `:/`
+>  - **ChilitagsDetection** A wrapper around chilitags. The class implements the `QAbstractVideoFilter`, hence it receives a frame from a VideoOutput and processes it.
+>   -**ChilitagsObject** An object define by the tag number. Chilitags are added to the `chiliobjects` property of ChiliDetection 
+>   -**ChiliThread** Class running the detection in a separated thread. Implements `QVideoFilterRunnable`.
 
-To use `qml-chilitags`, present a new frame as a `cv::Mat` wrapped in a `QVariant` through the `sourceImage` property.
 
 Desktop Build
 -------------
 
-1. Build and install OpenCV `3.0.0-alpha` tag:
+1. Build and install OpenCV `3.0.0-beta` tag:
 
   ```
   git checkout 3.0.0-alpha
@@ -38,7 +36,7 @@ Desktop Build
 
   ```
   make -j 5
-  make install
+  make install **optional**
   ```
 
 2. Build and install `chilitags` from [https://github.com/chili-epfl/chilitags](https://github.com/chili-epfl/chilitags):
@@ -48,32 +46,24 @@ Desktop Build
   cd build-desktop
   cmake .. -DCMAKE_INSTALL_PREFIX=/usr
   make -j 5
-  make install
+  make install **optional**
   ```
 
-3. **Optional**: Build and install qt3d from [https://qt.gitorious.org/qt/qt3d](https://qt.gitorious.org/qt/qt3d):
+3. Build and install qt  (http://qt-project.org/wiki/Building_Qt_5_from_Git):
+	For making the compilation faster, skip the following modelus in the configure step
+	
+	```
+	-skip qttranslations -skip qtwebkit -skip qtserialport -skip qtwebkit-examples  -skip qtwebengine 	
 
-  This enables QML interaction between Qt3D and Chilitags.
+	```
 
-  ```
-  mkdir build-desktop
-  cd build-desktop
-  /qt/install/root/5.3/gcc_64/bin/qmake ..
-  make -j 5
-  make install
-  ```
+4. Build and install qt creator (http://wiki.qt.io/Building-Qt-Creator-from-Git):
+	
 
-4. Build and install qml-chilitags:
-
-  ```
-  mkdir build-desktop
-  cd build-desktop
-  /qt/install/root/5.3/gcc_64/bin/qmake ..
-  make -j 5
-  make install
-  ```
+5. Open qml-chilitags in Qt creator
 
   Now the Chilitags QML plugin is installed alongside Qt's QML plugins and can be used similar to any other plugin.
+
 
 Android Build
 -------------
@@ -82,48 +72,25 @@ In addition to the OS, Qt and OpenCV requirements, you need:
 
   - Android SDK and Android API 14 (Android version 4.0)
 
-  - Android NDK r9d
+  - Android NDK r10d
 
 These instructions assume `armv7-a` target architecture. For other architectures, adapt the instructions to your liking.
 
-1. Export a standalone NDK toolchain:
 
-  ```
-  cd /path-to-android-ndk-r9d
-  ./build/tools/make-standalone-toolchain.sh \
-      --platform=android-14 \
-      --install-dir=/desired/path/to/android/standalone/toolchain \
-      --toolchain=arm-linux-androideabi-4.8
-  ```
-
-  Be aware that if you don't have write access to `/desired/path/to/android/standalone/toolchain`, the script fails silently.
-
-2. Set up the following environment variables:
-
-  ```
-  export ANDROID_HOME=/path/to/android/sdk/linux
-  export ANDROID_SDK_ROOT=$ANDROID_HOME
-  export ANDROID_SDK=$ANDROID_SDK_ROOT
-  export ANDROID_NDK_ROOT=/path-to-android-ndk-r9d
-  export ANDROID_NDK=$ANDROID_NDK_ROOT
-  export ANDROID_NDK_STANDALONE_TOOLCHAIN=/path/to/android/standalone/toolchain
-  export ANDROID_STANDALONE_TOOLCHAIN=$ANDROID_NDK_STANDALONE_TOOLCHAIN
-  export ANDROID_ABI=armeabi-v7a
-  export ANDROID_NATIVE_API_LEVEL=14
-  export ANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-4.8
-  ```
-
-3. Build and install OpenCV `3.0.0-alpha` tag:
+1. Build and install OpenCV `3.0.0-alpha` tag:
 
   ```
   git checkout 3.0.0-alpha
   cd platforms
-  mkdir build-desktop
-  cd build-desktop
+  mkdir build-android
+  cd build-android
   cmake ../.. \
       -DCMAKE_TOOLCHAIN_FILE=../android/android.toolchain.cmake \
-      -DCMAKE_INSTALL_PREFIX=$ANDROID_STANDALONE_TOOLCHAIN/sysroot/usr/share/opencv/
-  ```
+      -DANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-4.9 \
+      -DCMAKE_INSTALL_PREFIX=[absolute-path-build-android]/install \
+      -DANDROID_NDK_LAYOUT=RELEASE \
+      -DANDROID_ABI="armeabi-v7a"
+   ```
 
   At this point, enable `BUILD_SHARED_LIBS`.
 
@@ -136,56 +103,74 @@ These instructions assume `armv7-a` target architecture. For other architectures
   make install
   ```
 
-4. Set up the following environment variable:
+2. Build and install `chilitags` from [https://github.com/chili-epfl/chilitags](https://github.com/chili-epfl/chilitags):
 
+  Set up the following environment variables:
   ```
-  export OpenCV_DIR=${ANDROID_STANDALONE_TOOLCHAIN}/sysroot/usr/share/opencv/sdk/native/jni/
+  export ANDROID_NATIVE_API_LEVEL=14
+  export ANDROID_ABI=armeabi-v7a
+   
   ```
-
-5. Build and install `chilitags` from [https://github.com/chili-epfl/chilitags](https://github.com/chili-epfl/chilitags):
-
+  
   ```
-  mkdir build-desktop
-  cd build-desktop
+  mkdir build-android
+  cd build-android
   cmake .. \
-      -DCMAKE_TOOLCHAIN_FILE=$OpenCV_DIR/android.toolchain.file
-      -DCMAKE_INSTALL_PREFIX=$ANDROID_STANDALONE_TOOLCHAIN/sysroot/usr/
+      -DCMAKE_TOOLCHAIN_FILE=[opencv-dir]/platforms/android/android.toolchain.cmake \
+      -DANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-4.9 \
+      -DCMAKE_INSTALL_PREFIX=[absolute-path-build-android]/install \
+      -DANDROID_NDK_LAYOUT=RELEASE \
+      -DOpenCV_DIR=opencv-build-android-directory 
+
   ```
 
   At this point, disable `ANDROID_INSTALL_LIBRARIES` and `WITH_JNI_BINDINGS` since you won't be using Chilitags inside an Android project directly.
 
   ```
   make -j 5
-  make install
+  make install 
   ```
+The previous two steps can be customized in for the CortexA15.A7 of Tablet Samsung SM-P600 by replacing the `ANDROID_ABI="armeabi-v7a with CortexA15"` and substitute the file  [opencv-dir]/cmake/OpenCVCompilerOptions.cmake and [opencv-dir/platforms/android/android.toolchain.cmake] with the ones from [https://github.com/lorenzolightsgdwarf/opencv-3.00-CortexA15-config]
 
-6. **Optional**: Build and install `qt3d` from [https://qt.gitorious.org/qt/qt3d](https://qt.gitorious.org/qt/qt3d):
 
-  This enables QML interaction between Qt3D and Chilitags.
-
-  ```
-  mkdir build-android
-  cd build-android
-  /qt/install/root/5.3/android_armv7/bin/qmake ..
-  make -j 5
-  make install
-  ```
-
-  **Note:** `make install` will try to install libraries to `/libs/armeabiv7-a/`. This is a remnant from ndk-build and should be avoided. Make sure you **don't** execute `make install` with `sudo`.
-
-7. Build and install qml-chilitags:
+3. Build and install `qt` from (http://qt-project.org/wiki/Qt5ForAndroidBuilding):
 
   ```
-  mkdir build-android
-  cd build-android
-  /qt/install/root/5.3/android_armv7/bin/qmake ..
-  make -j 5
-  make install
+  cd qt 5
+  mkdir qt-build-android && cd qt-build-android
+  ../configure -xplatform android-g++ -developer-build -opensource -nomake tests -nomake examples -android-sdk [android-sdk-dir]  -android-ndk [android-ndk-r10d-dir] -android-toolchain-version 4.9  -android-ndk-host linux-x86_64 -android-ndk-platform android-19 -android-arch armeabi-v7a -confirm-license -no-warnings-are-errors -skip qtactiveqt -skip qttranslations -skip qtwebkit -skip qtserialport -skip qtwebkit-examples -skip qtdoc -skip qtrepotools -skip qtqa -skip qtsystems -skip qtdocgallery -skip qtpim -skip qtwayland -skip qtx11extras -skip qtmacextras -skip qtwinextras -skip qtenginio -skip webchannel
+  make
   ```
 
-  Now the Chilitags QML plugin is installed alongside Qt's QML plugins and can be used similar to any other plugin.
+To customize for CortexA15.A7 of Tablet Samsung SM-P600, enabling neon and hard float-abi:
+  
+   ```
+   	gedit qt5/qtbase/mkspecs/android-g++/qmake.conf
+	Search for `equals(ANDROID_TARGET_ARCH, armeabi-v7a)`, comment and substitute it with 
+	QMAKE_CFLAGS = -Wno-psabi -march=armv7ve -mtune=cortex-a15.cortex-a7  -mcpu=cortex-a15 -mfpu=neon-vfpv4 -mhard-float -mfloat-abi=hard -  D_NDK_MATH_NO_SOFTFP=1  -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -DANDROID -Wa,--noexecstack -fno-builtin-memmove  -ftree-vectorize -ftree-vectorizer-verbose=1 -Wno-error=cast-align
+	search for line `QMAKE_LFLAGS = --sysroot=$$ANDROID_PLATFORM_ROOT_PATH` and add -Wl,--no-warn-mismatch -lm_hard
+	Search for `QMAKE_LIBS_PRIVATE`, remove -lm and add -lm_hard
 
-  Note that you still need to bundle the required OpenCV libraries with `ANDROID_EXTRA_LIBS` in the project that uses Chilitags. See [samples/detection/detection.pro](samples/detection/detection.pro) for an example.
+   ```
+
+4. Using qml-chilitags in Qt creator:
+
+  Remember to add 'make install' after the step 'make' in the Build Steps.
+  
+	In order to debug the pluging when used in a 3rd qml application, you need to make a symbolic link to the plugin library (.so) in the build dir of the application so that gdb canm load the symbols [http://visualgdb.com/gdbreference/commands/set_solib-search-path] (I cannot set it in QTC, it is overwritter...) 
+
+QT Creator doesn't recognize the pluging
+----------------------------------------
+With reference to [http://doc.qt.io/qt-5/qtqml-modules-qmldir.html#writing-a-qmltypes-file]
+
+Usually plugins get installed in [qt-build]/qtbase/qml/Plugin-name
+For some obscure reason Qt doesn't create the plugins.qmltype that provides the plugin description.
+In order to solve it, you have to manualy create the file using the tool `qmlplugindump` in [qt-built]/qtbase/bin
+
+For example, 
+```
+qmlplugindump Chilitags 1.0 [qt-build]/qtbase/qml/Chilitags > [qt-build]/qtbase/qml/Chilitags/plugin.qmltypes
+```
 
 Running Samples
 ---------------

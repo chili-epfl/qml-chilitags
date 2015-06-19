@@ -158,7 +158,7 @@ void ChilitagsThread::stop()
 QVideoFrame ChilitagsThread::run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags){
     auto pixelFormat=surfaceFormat.pixelFormat();
     auto handle=input->handleType();
-    //This case
+    //qDebug()<<input->size();
     switch (handle) {
     case QAbstractVideoBuffer::NoHandle: ///< Mainly desktop configuration
         if(input->map(QAbstractVideoBuffer::ReadOnly)){

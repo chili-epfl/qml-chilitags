@@ -3,7 +3,7 @@ TEMPLATE = app
 QT += qml quick multimedia widgets
 CONFIG += debug
 
-QT += 3dcore  3drenderer 3dquick 3dinput qml quick
+QT += 3dcore 3drenderer 3dquick 3dinput qml quick
 
 SOURCES += src/main.cpp
 

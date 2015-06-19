@@ -30,9 +30,6 @@ void ChilitagsPlugin::registerTypes(const char *uri)
 {
     qmlRegisterType<ChilitagsDetection>(uri, 1, 0, "Chilitags");
     qmlRegisterType<ChilitagsObject>(uri, 1, 0, "ChilitagsObject");
-    qmlRegisterType<MatrixTransform>(uri, 1, 0, "MatrixTransform");
-#ifdef QT_3D_LIB
-    qmlRegisterType<MatrixTransform3D>(uri, 1, 0, "MatrixTransform3D");
-#endif
+
 }
 

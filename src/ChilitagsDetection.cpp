@@ -83,7 +83,6 @@ void ChilitagsDetection::setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap stlT
         obj->updateTag(tags);
     }
 
-    qDebug()<<"Found ntags:"<<tags.size();
     emit tagsChanged(tags);
 }
 

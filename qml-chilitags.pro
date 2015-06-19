@@ -6,34 +6,17 @@ CONFIG -= android_install
 
 QT += qml quick multimedia
 
-qtHaveModule(3d){
-    message("Qt3D found, adding 3d components.")
-    QT += 3dcore
-    #DEFINES += QT_3D_LIB    #QMake should be adding this but it doesnt...
-
-    HEADERS += \
-        src/MatrixTransform3D.h
-
-    SOURCES += \
-        src/MatrixTransform3D.cpp
-}
-else{
-    message("Qt3D not found, skipping 3d components.")
-}
-
 
 TARGET = $$qtLibraryTarget($$TARGET)
 uri = Chilitags
 
 HEADERS += \
-    src/MatrixTransform.h \
     src/ChilitagsDetection.h \
     src/ChilitagsThread.h \
     src/ChilitagsObject.h \
     src/ChilitagsPlugin.h
 
 SOURCES += \
-    src/MatrixTransform.cpp \
     src/ChilitagsDetection.cpp  \
     src/ChilitagsThread.cpp \
     src/ChilitagsObject.cpp \

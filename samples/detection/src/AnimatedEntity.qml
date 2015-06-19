@@ -1,7 +1,6 @@
 import Qt3D 2.0
 import Qt3D.Render 2.0
 
-import QtQuick 2.3 as QQ2
 
 
 Entity {
@@ -9,35 +8,34 @@ Entity {
 
     Camera {
         id: camera
-        projectionType: CameraLens.PerspectiveProjection
-        fieldOfView: 45
-        aspectRatio: 16/9
+        projectionType: CameraLens.FrustumProjection
         nearPlane : 0.1
-        farPlane : 1000.0
-        position: Qt.vector3d( 0.0, 0.0, -40.0 )
-        upVector: Qt.vector3d( 0.0, 1.0, 0.0 )
+        farPlane : 1000
+
+        top: 0.1*(chilitags.projectionMatrix.m23/chilitags.projectionMatrix.m11)
+        bottom: -0.1*(chilitags.projectionMatrix.m23/chilitags.projectionMatrix.m11)
+        left: -0.1*(chilitags.projectionMatrix.m13/chilitags.projectionMatrix.m22)
+        right: 0.1*(chilitags.projectionMatrix.m13/chilitags.projectionMatrix.m22)
+
+        position: Qt.vector3d( 0.0, 0.0, -1 )
+        upVector: Qt.vector3d( 0.0, -1.0, 0.0 )
         viewCenter: Qt.vector3d( 0.0, 0.0, 0.0 )
     }
 
     Configuration  {
         controlledCamera: camera
+        onControlledCameraChanged: console.log(sphereTransform.matrix)
+
     }
 
     components: [
+
         FrameGraph {
-            activeFrameGraph: Viewport {
+            activeFrameGraph:
+                ForwardRenderer {
                 id: viewport
-                rect: Qt.rect(0.0, 0.0, 1.0, 1.0) // From Top Left
-                clearColor: Qt.rgba(0, 0, 0, 0)
-
-                CameraSelector {
-                    id : cameraSelector
-                    camera: camera
-
-                    ClearBuffer {
-                        buffers : ClearBuffer.ColorDepthBuffer
-                    }
-                }
+                clearColor: "transparent"
+                camera:camera
             }
         }
     ]
@@ -47,21 +45,27 @@ Entity {
     }
 
 
-    SphereMesh {
-        id: sphereMesh
-        radius: 3
+    CuboidMesh {
+        id: cuboidMesh
+        xExtent: 20
+        yExtent: 20
+        zExtent: 0.5
     }
 
     Transform {
         id: sphereTransform
-        MatrixTransform{
-            matrix: tag.transform
-        }
+
+        Translate{dx:10
+                  dy:10}
+        MatrixTransform{matrix: tag.transform}
+
     }
 
     Entity {
         id: sphereEntity
-        components: [ sphereMesh, material, sphereTransform ]
+        components: [ cuboidMesh, material, sphereTransform ]
+
     }
+
 }
 

@@ -1,52 +1,52 @@
 
 import QtMultimedia 5.5
 import Chilitags 1.0
-
-import QtQuick 2.3
+import QtQuick 2.0
 import QtQuick.Scene3D 2.0
+import QtQuick.Window 2.2
 
 Item {
-    Text {
-        text: "Click me!"
-        anchors.top: parent.top
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
+    Camera{
+        id:camDevice
+        imageCapture.resolution: "640x480" //Android sets the viewfinder resolution as the capture one
+        viewfinder.resolution:"640x480"
     }
 
-    Camera{
-     id:camDevice
-     //CameraCapture.resolution: "640x480"
-     viewfinder.resolution:"640x480"
-    }
+
     VideoOutput{
+        //width: 640
+        //height: 480
+        //scale: Screen.width/width
+        anchors.centerIn: parent
+        //anchors.fill: parent
         source:camDevice
         filters:[chilitags]
+        Scene3D {
+        anchors.fill: parent
+        focus: true
+        aspects: "input"
+        AnimatedEntity {}
+        }
     }
+
+
     Chilitags{
         id:chilitags
+        chiliobjects: [tag]
+
+    }
+
     ChilitagsObject{
         id: tag
-        name: "tag_1023"
-        }
+        name: "tag_1018"
     }
 
-    Item {
-        id: scene
-        width: Math.min(parent.width, parent.height) - 100
-        height: width
-        anchors.centerIn: parent
-        //color: "darkRed"
 
-        Scene3D {
-            anchors.fill: parent
-            anchors.margins: 10
-            focus: true
-            aspects: "input"
 
-            AnimatedEntity {}
-        }
-    }
+
+
 
 
 }
+
 
