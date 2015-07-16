@@ -89,7 +89,7 @@ public:
      *
      * @param tagConfigurationFile The qrc file, must begin with :/
      */
-    void setTagConfigurationFile(QString tagConfigurationFile);
+    void setTagConfigurationFile(QVariant tagConfigurationFile);
 
     //TODO: setDefaultTagSize
     //TODO: setFilter
@@ -126,6 +126,7 @@ private slots:
     void setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap tags);
 
 private:
+    void p_setTagConfigurationFile(QString tagConfigurationFile);
 
     QVariantMap tags;                   ///< Set of most recent tags and their poses wrt the camera, maps QString's to QMatrix4x4's
 

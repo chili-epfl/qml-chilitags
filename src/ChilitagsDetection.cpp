@@ -86,14 +86,20 @@ void ChilitagsDetection::setTags(chilitags::Chilitags3D_<qreal>::TagPoseMap stlT
     emit tagsChanged(tags);
 }
 
-void ChilitagsDetection::setTagConfigurationFile(QString tagConfigurationFile)
+void ChilitagsDetection::p_setTagConfigurationFile(QString tagConfigurationFile)
 {
     QFile configFile(tagConfigurationFile);
     configFile.open(QFile::ReadOnly);
     QTextStream inStream(&configFile);
     chilitags.readTagConfiguration(inStream.readAll().toStdString(),false,true);
 }
-
+void ChilitagsDetection::setTagConfigurationFile(QVariant tagConfigurationFile)
+{
+    if(tagConfigurationFile.canConvert<QUrl>())
+        p_setTagConfigurationFile(tagConfigurationFile.value<QUrl>().toLocalFile());
+    else if(tagConfigurationFile.canConvert<QString>())
+        p_setTagConfigurationFile(tagConfigurationFile.toString());
+}
 
 QQmlListProperty<ChilitagsObject> ChilitagsDetection::chiliobjects()
 {

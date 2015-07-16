@@ -39,12 +39,12 @@ android {
         android.hardware.camera
 }
 !android{
-    INCLUDEPATH += /home/chili/opencv/build-linux/install/include
-    INCLUDEPATH += /home/chili/chilitags/build-linux/install/include
+#    INCLUDEPATH += /home/chili/opencv/build-linux/install/include
+#    INCLUDEPATH += /home/chili/chilitags/build-linux/install/include
     LIBS += -L/home/chili/opencv/build-linux/install/lib
     LIBS += -L/home/chili/chilitags/build-linux/install/lib
-    LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
-    LIBS += -lchilitags
+    #LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
+    #LIBS += -lchilitags
 }
 
 DISTFILES += \
