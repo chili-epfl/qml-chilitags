@@ -85,7 +85,7 @@ These instructions assume `armv7-a` target architecture. For other architectures
   mkdir build-android
   cd build-android
   cmake ../.. \
-      -DANDROID_NDK=[android-ndk-dir]
+      -DANDROID_NDK=[android-ndk-dir] \
       -DCMAKE_TOOLCHAIN_FILE=../android/android.toolchain.cmake \
       -DANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-4.9 \
       -DCMAKE_INSTALL_PREFIX=[absolute-path-build-android]/install \
