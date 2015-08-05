@@ -172,6 +172,7 @@ For example,
 ```
 qmlplugindump Chilitags 1.0 [qt-build]/qtbase/qml/Chilitags > [qt-build]/qtbase/qml/Chilitags/plugin.qmltypes
 ```
+If the shared libraries linked by the plugin are not in the default lib folder (/usr/libs), you need to add the relative paths to the LD_LIBRARY_PATH variable. 
 
 Running Samples
 ---------------
