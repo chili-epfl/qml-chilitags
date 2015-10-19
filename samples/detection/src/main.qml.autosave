@@ -9,6 +9,23 @@ import QtWebKit 3.0
 
 
 //The name for a tag is tag_nb (do not add 0 to numbers from 1 to 9 !)
+
+/*
+* If you want to add a tag and bind a website to that tag then do the following:
+* Step 1: Add a new ChilitagsObject element:
+*               ChilitagsObject {
+                id: tagNB
+                name: "tag_NB"
+
+                onVisibilityChanged: {
+                    if(tagNB.visible){
+                        webview.url = "The url address of your website";
+                    }
+                }
+            }
+            
+  Step 2: Add that tag's id to the chiliobjects array of the Chilitags element.
+*/
 Item {
 
         Camera{
@@ -16,9 +33,6 @@ Item {
             imageCapture.resolution: "640x480" //Android sets the viewfinder resolution as the capture one
             viewfinder.resolution: "640x480"
         }
-
-
-
 
         Rectangle{
             id: videoOutputRectangle

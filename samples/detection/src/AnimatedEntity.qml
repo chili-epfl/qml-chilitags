@@ -1,10 +1,11 @@
 import Qt3D 2.0
 import Qt3D.Renderer 2.0
-
-
+import QtQuick 2.0 as QQ2
+import Chilitags 1.0
 
 Entity {
     id: sceneRoot
+    property ChilitagsObject tagForThisObject
 
     Camera {
         id: camera
@@ -57,7 +58,7 @@ Entity {
 
         Translate{dx:10
                   dy:10}
-        MatrixTransform{matrix: tag.transform}
+        MatrixTransform{matrix: tagForThisObject.transform}
 
     }
 
