@@ -28,7 +28,18 @@ import QtWebKit.experimental 1.0
     -Step 2: Add that tag's id to the chiliobjects array of the Chilitags element.
 
 
-  If you want
+  If you want to bind evaluating some javascript code to a tag then do the following:
+    -Step 1: Add a new ChilitagsObject element:
+*               ChilitagsObject {
+                id: tagNB
+                name: "tag_NB"
+
+                onVisibilityChanged: {
+                    if(tagNB.visible){
+                        webview.experimental.evaluateJavaScript("window.location.href = 'https://www.epfl.ch/';");
+                    }
+                }
+            }
 
   The following is a list of the tags and their functions:
   tag_2: Display a gray square fitting the tag and browse http://www.google.com
