@@ -13,7 +13,7 @@ import QtWebKit.experimental 1.0
 
 /*
 * If you want to add a tag and bind a website to that tag then do the following:
-*   -Step 1: Add a new ChilitagsObject element:
+*   -Step 1: Add a new ChilitagsObject element (NB is the tag's ID):
 *               ChilitagsObject {
                 id: tagNB
                 name: "tag_NB"
@@ -28,15 +28,28 @@ import QtWebKit.experimental 1.0
     -Step 2: Add that tag's id to the chiliobjects array of the Chilitags element.
 
 
-  If you want
+  If you want to bind evaluating some javascript code to a tag then do the following:
+    -Step 1: Add a new ChilitagsObject element (NB is the tag's ID):
+*               ChilitagsObject {
+                id: tagNB
+                name: "tag_NB"
+
+                onVisibilityChanged: {
+                    if(tagNB.visible){
+                        webview.experimental.evaluateJavaScript("A string representing javascript code");
+                    }
+                }
+            }
+
+    -Step 2: Add that tag's id to the chiliobjects array of the Chilitags element.
 
   The following is a list of the tags and their functions:
   tag_2: Display a gray square fitting the tag and browse http://www.google.com
+  tag_9: Evaluate some javascript code
   tag_10: Go back in the browser history
   tag_20: Go forward in the browser history
   tag_28: Browse https://www.yahoo.com/
   tag_32: Browse https://fr.wikipedia.org
-  tag_9: Evaluate some javascript code
   */
 
 Item {
