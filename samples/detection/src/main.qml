@@ -6,9 +6,36 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtWebKit 3.0
+import QtWebKit.experimental 1.0
 
 
 //The name for a tag is tag_nb (do not add 0 to numbers from 1 to 9 !)
+
+/*
+* If you want to add a tag and bind a website to that tag then do the following:
+* Step 1: Add a new ChilitagsObject element:
+*               ChilitagsObject {
+                id: tagNB
+                name: "tag_NB"
+
+                onVisibilityChanged: {
+                    if(tagNB.visible){
+                        webview.url = "The url address of your website";
+                    }
+                }
+            }
+
+  Step 2: Add that tag's id to the chiliobjects array of the Chilitags element.
+
+
+  The following is a list of the tags and their functions:
+  tag_2: Display a gray square fitting the tag and browse http://www.google.com
+  tag_10: Go back in the browser history
+  tag_20: Go forward in the browser history
+  tag_28: Browse https://www.yahoo.com/
+  tag_32: Browse https://fr.wikipedia.org
+  */
+
 Item {
 
         Camera{
@@ -17,10 +44,8 @@ Item {
             viewfinder.resolution: "640x480"
         }
 
-
-
-
         Rectangle{
+
             id: videoOutputRectangle
             x: 640
             y: 480
@@ -43,7 +68,34 @@ Item {
 
             Chilitags{
                 id:chilitags
-                chiliobjects: [tag2, tag28, tag32]
+                chiliobjects: [tag2, tag10, tag20, tag28, tag32]
+            }
+
+            ChilitagsObject {
+                id: tag10
+                name: "tag_10"
+
+                onVisibilityChanged: {
+                    if(tag10.visible){
+                        if(webview.canGoBack){
+                            webview.goBack();
+                        }
+                        webview.experimental.evaluateJavaScript("window.location.href = 'https://fr.wikipedia.org';");
+                    }
+                }
+            }
+
+            ChilitagsObject {
+                id: tag20
+                name: "tag_20"
+
+                onVisibilityChanged: {
+                    if(tag20.visible){
+                        if(webview.canGoForward){
+                            webview.goForward();
+                        }
+                    }
+                }
             }
 
             ChilitagsObject {
@@ -63,7 +115,7 @@ Item {
 
                 onVisibilityChanged: {
                     if(tag32.visible){
-                        webview.url = "http://www.jeuxvideo.com";
+                        webview.url = "https://fr.wikipedia.org";
                     }
                 }
             }
@@ -86,7 +138,7 @@ Item {
                         videoOutputRectangle.x = 0;
                         videoOutputRectangle.y = 0;
                         videoOutputRectangle.z = 0;
-                        webview.url = "http://www.google.com"
+                        //webview.url = "http://www.google.com"
                     } else {
 
                         webBrowser.width = 800;
@@ -101,8 +153,6 @@ Item {
                         videoOutputRectangle.y = 480;
                         videoOutputRectangle.z = 1;
                     }
-
-
                 }
             }
         }
@@ -111,7 +161,7 @@ Item {
             id: webBrowser
             width: 800
             height: 640
-            anchors.leftMargin: videoOutput
+
             z: -1
 
             WebView {
@@ -130,7 +180,6 @@ Item {
                     }
                 }
         }
-
 }
 
 
